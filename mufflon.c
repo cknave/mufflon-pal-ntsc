@@ -1536,7 +1536,7 @@ uint64_t compare_cols(MufflonContext *m, int x, int y, int r2, int g2, int b2) {
 
 //XXX aufbohren damit es priorities und dimensions berücksichtigt?
 //gern auch mit variabler breite, 8 sind jetzt halt mal statisch, muss aber nicht
-inline uint64_t find_best_combinations(MufflonContext *m, int block, int y, int *cols) {
+static inline uint64_t find_best_combinations(MufflonContext *m, int block, int y, int *cols) {
 	int comb;
 	uint64_t delta;
 	uint64_t blk_best=0;
