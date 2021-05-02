@@ -3342,7 +3342,6 @@ void interlace_render(MufflonContext* m) {
 	int frame_1;
 	int frame_2;
 
-	int temp;
 	int flicker;
 
 	for(y=0;y<C64YRES;y++) {
@@ -3371,7 +3370,7 @@ void interlace_render(MufflonContext* m) {
 			}
 
 			for(x=blockx;x<blockx+8;x+=2) {
-				temp=interlace_find_best_combination(m, x, y, ink1, ink2, paper1, paper2, sprite1, sprite2, &frame_1, &frame_2,&flicker);
+				interlace_find_best_combination(m, x, y, ink1, ink2, paper1, paper2, sprite1, sprite2, &frame_1, &frame_2,&flicker);
 				if(m->option_deflicker!=0) resort_combinations(m,x, y, &frame_1, &frame_2, ink1, ink2, paper1, paper2, sprite1, sprite2);
 				smask1<<=1;
 				smask2<<=1;
@@ -3563,7 +3562,6 @@ void find_sprite_colors_bruteforce(MufflonContext* m) {
 	int bestcol2;
 	int spr1;
 	int spr2;
-	int ink1,ink2,paper1,paper2;
 	int ic1,ic2,pc1,pc2;
 	int icc2,pcc2,sprc2;
 	int flicker;
@@ -3628,10 +3626,6 @@ void find_sprite_colors_bruteforce(MufflonContext* m) {
 						blockdiff=0;
 						flicker=0;
 						for(x=blockx;x<blockx+48 && x<m->sl_sizex;x+=8) {
-							ink1=-1;
-							ink2=-1;
-							paper1=-1;
-							paper2=-1;
 							subbest=-1;
 							subflickbest=-1;
 							/* combine with all permutations for paper and ink */
@@ -3646,18 +3640,10 @@ void find_sprite_colors_bruteforce(MufflonContext* m) {
 											if(   (ic1==-1 || m->used_colors[blocky/2][x/8][ic1]>0) && (ic2==-1 || m->used_colors[blocky/2][x/8][ic2]>0) && (pc1==-1 || m->used_colors[blocky/2][x/8][pc1]>0) && (pc2==-1 || m->used_colors[blocky/2][x/8][pc2]>0) ) {
 												subblockdiff2ink=block_diff(m,x,blocky,ic1,ic2,pc1,pc2,sprite1,sprite2,subbest,&subflicker);
 												if(subblockdiff2ink<subbest || subbest<0) {
-													ink1=ic1;
-													ink2=ic2;
-													paper1=pc1;
-													paper2=pc2;
 													subbest=subblockdiff2ink;
 												}
 												else if(subblockdiff2ink==subbest && subflicker>=0 && (subflicker<subflickbest || subflickbest<0)) {
 													subflickbest=subflicker;
-													ink1=ic1;
-													ink2=ic2;
-													paper1=pc1;
-													paper2=pc2;
 												}
 											}
 										}
