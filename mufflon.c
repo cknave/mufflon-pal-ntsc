@@ -43,8 +43,8 @@
 #define NOSPEEDUPFLIBUG	0
 #define EVEN		0
 
-struct timeb start;
-struct timeb end;
+struct timespec start;
+struct timespec end;
 
 
 void find_hires_colors(MufflonContext* m);
@@ -1226,17 +1226,17 @@ void load_bitmap(MufflonContext *m, char* name) {
 }
 
 void begin_measure() {                                                                  //set measure start point
-        ftime(&start);
+        clock_gettime(CLOCK_MONOTONIC, &start);
         return;
 }
 
 void end_measure(MufflonContext* m) {                                                                    //end of measure, calculate time needed
         double time;
         double timediff;
-        ftime(&end);
-        timediff=(end.time-start.time)*1000.0+(double)end.millitm-(double)start.millitm;
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        timediff=(end.tv_sec-start.tv_sec)*1000000000.0+(double)end.tv_nsec-(double)start.tv_nsec;
 
-        time=timediff/1000.0;
+        time=timediff/1000000000.0;
         info_message("calc.time: %.4fs\n", time);
         return;
 }
