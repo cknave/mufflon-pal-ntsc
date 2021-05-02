@@ -1354,8 +1354,12 @@ void convert_nufli(MufflonContext *m) {
 
 	/* copy the displayer code */
 	memcpy(&result[0x1000],nuifli_displayer_code1,0x01f5);
-	memcpy(&result[0x1300],nuifli_displayer_code2,0x00d6);
+	memcpy(&result[0x12fe],nuifli_displayer_code2,0x00d8);
 	memcpy(&result[0x1fc0],nuifli_displayer_code3,0x0030);
+	memcpy(&result[0x1f40],nuifli_displayer_code4,0x0025);
+	memcpy(&result[0x23c0],nuifli_displayer_code5,0x001e);
+	memcpy(&result[0x27c0],nuifli_displayer_code6,0x001e);
+	memcpy(&result[0x2bc0],nuifli_displayer_code7,0x001e);
 
 	write_result(m,result,0x5a00);
 }
