@@ -1,0 +1,20 @@
+
+MINGW=~/mingw32
+CC=$(MINGW)/bin/mingw32-gcc
+
+# either there is a bug in the compiler, or optimizations trigger
+# a bug in the code (-p option would crash)
+#COPT=-O5 -funroll-loops -ffast-math -Wall -W
+COPT=-O2 -Wall -W
+LIBS=-lm
+
+.PHONY: clean
+
+all : mufflon.exe
+
+mufflon.exe : mufflon.c mufflon.h Makefile.mingw32
+	$(CC) -o mufflon.exe $(COPT) mufflon.c $(LIBS)
+
+clean:
+	rm -f mufflon.exe
+	rm -f *~
