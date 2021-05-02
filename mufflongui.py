@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Mufflon converter GUI
@@ -22,11 +23,11 @@
 #
 # Martin Wendt c64@enthusi.de
 
-import Tkinter
+import tkinter
 import time
 import sys
-import tkFileDialog
-import tkMessageBox
+import tkinter.filedialog
+import tkinter.messagebox
 from PIL import Image, ImageTk
 import tempfile
 import os
@@ -100,7 +101,7 @@ accepted_types = (".bmp",".gun",".fun",".fp2",".drl",".jpg",".jpeg",".png",".gif
 
 
 def call(*args, **kwargs):
-          print 'start'
+          print('start')
           p=subprocess.Popen(*args, **kwargs)
           while p.poll() == None:
             #infobox.update()
@@ -111,20 +112,20 @@ def call(*args, **kwargs):
 #------------------------
 class notebook:
 
-    def __init__(self, master, side=Tkinter.LEFT):
+    def __init__(self, master, side=tkinter.LEFT):
 
         self.active_fr = None
         self.count = 0
-        self.choice = Tkinter.IntVar(0)
-        if side in (Tkinter.TOP, Tkinter.BOTTOM):
-            self.side = Tkinter.LEFT
+        self.choice = tkinter.IntVar(0)
+        if side in (tkinter.TOP, tkinter.BOTTOM):
+            self.side = tkinter.LEFT
         else:
-            self.side = Tkinter.TOP
+            self.side = tkinter.TOP
         
-        self.rb_fr = Tkinter.Frame(master, borderwidth=2, relief=Tkinter.RIDGE)
-        self.rb_fr.pack(side=side, fill=Tkinter.BOTH)
-        self.screen_fr = Tkinter.Frame(master, borderwidth=2, relief=Tkinter.RIDGE)
-        self.screen_fr.pack(fill=Tkinter.BOTH)
+        self.rb_fr = tkinter.Frame(master, borderwidth=2, relief=tkinter.RIDGE)
+        self.rb_fr.pack(side=side, fill=tkinter.BOTH)
+        self.screen_fr = tkinter.Frame(master, borderwidth=2, relief=tkinter.RIDGE)
+        self.screen_fr.pack(fill=tkinter.BOTH)
         
 
     def __call__(self):
@@ -133,12 +134,12 @@ class notebook:
 
     def add_screen(self, fr, title):
         
-        b = Tkinter.Radiobutton(self.rb_fr, text=title, \
+        b = tkinter.Radiobutton(self.rb_fr, text=title, \
             variable=self.choice, value=self.count, \
             command=lambda: self.display(fr))
-        b.pack(fill=Tkinter.BOTH, side=self.side)
+        b.pack(fill=tkinter.BOTH, side=self.side)
         if not self.active_fr:
-            fr.pack(fill=Tkinter.BOTH, expand=1)
+            fr.pack(fill=tkinter.BOTH, expand=1)
             self.active_fr = fr
 
         self.count += 1
@@ -146,7 +147,7 @@ class notebook:
     def display(self, fr):
         
         self.active_fr.forget()
-        fr.pack(fill=Tkinter.BOTH, expand=1)
+        fr.pack(fill=tkinter.BOTH, expand=1)
         self.active_fr = fr
 #------------------------------------
 #nufli commands
@@ -245,10 +246,10 @@ def Convert(*optional):
     target_file_name=os.path.basename(target_file)
 
     #update entry
-    W6.delete(0, Tkinter.END)
+    W6.delete(0, tkinter.END)
     W6.insert(0,target_file)
 
-    pcomm.append(unicode(source_file))
+    pcomm.append(str(source_file))
 
     #creat basename: '/path/image.nuf' -> 'image'
     target_base=os.path.join(tmp_path,target_file_name[0:-4])
@@ -281,7 +282,7 @@ def Convert(*optional):
       #trucolor
       if lmax_scale.get() <= lmin_scale.get():
         #warning
-        tkMessageBox.showwarning("Luminance Error:","Max Luminance setting must be\nlarger than Min Luminance!")
+        tkinter.messagebox.showwarning("Luminance Error:","Max Luminance setting must be\nlarger than Min Luminance!")
         lmin=lmin_scale.get()
         lmax=lmax_scale.get()
         if lmax==0:
@@ -306,18 +307,18 @@ def Convert(*optional):
     if p_only!=0:
         pcomm.append('--solid')
         pcomm.extend(['--otype','bmp'])
-        pcomm.extend(['-o','%s' % (unicode(preview_file))])
+        pcomm.extend(['-o','%s' % (str(preview_file))])
     else:
-        pcomm.extend(['-o','%s' % (unicode(nuf_file))])
+        pcomm.extend(['-o','%s' % (str(nuf_file))])
         
-        infobox=Tkinter.Toplevel()
-        infomsg=Tkinter.Message(infobox,anchor='w',width=200,padx=10,pady=10, text='''Conversion in progress!
+        infobox=tkinter.Toplevel()
+        infomsg=tkinter.Message(infobox,anchor='w',width=200,padx=10,pady=10, text='''Conversion in progress!
 Depending on your settings,
 this may take a while...''')
         infomsg.pack()
         infobox.update()
 
-    print pcomm
+    print(pcomm)
     subprocess.call(pcomm)
     #p1 = Popen(["mufflon"], stdout=PIPE)
     #p2 = Popen(["grep", "hda"], stdin=p1.stdout, stdout=PIPE)
@@ -332,27 +333,27 @@ this may take a while...''')
       return
   
     if p_only==0:
-      print 'copy "%s" to "%s"' % (nuf_file,target_path)
+      print('copy "%s" to "%s"' % (nuf_file,target_path))
       try:
         shutil.copy (nuf_file, target_path)
       except:
-        tkMessageBox.showwarning('Ooops!','Something went wrong')
+        tkinter.messagebox.showwarning('Ooops!','Something went wrong')
         infobox.destroy()
       infobox.destroy()
    
     #if SavePreview called this:
     if p_only==2:
-      got_path = tkFileDialog.asksaveasfilename(title="Save Pre-Convert as", filetypes=[("bmp file",".bmp"),("All files",".*")],initialdir=target_path,initialfile=os.path.basename(preview_file))
+      got_path = tkinter.filedialog.asksaveasfilename(title="Save Pre-Convert as", filetypes=[("bmp file",".bmp"),("All files",".*")],initialdir=target_path,initialfile=os.path.basename(preview_file))
       if not got_path:
         got_path='.'
       if got_path=='.':
         return
       save_preview_path = got_path
-      print 'copy "%s" to "%s"' % (preview_file,save_preview_path)
+      print('copy "%s" to "%s"' % (preview_file,save_preview_path))
       try:
         shutil.copy (preview_file, save_preview_path)
       except:
-        tkMessageBox.showwarning('Ooops!','Something went wrong')
+        tkinter.messagebox.showwarning('Ooops!','Something went wrong')
         infobox.destroy()
       
     #update images
@@ -378,7 +379,7 @@ this may take a while...''')
 def Select_Open():
     global source_photo
     global accepted_types
-    got_path = tkFileDialog.askopenfilename(title="Open file", filetypes=[("Image file",accepted_types),("All files",".*")])
+    got_path = tkinter.filedialog.askopenfilename(title="Open file", filetypes=[("Image file",accepted_types),("All files",".*")])
     if not got_path:
       got_path='.'
     if got_path=='.':
@@ -387,7 +388,7 @@ def Select_Open():
     #print got_path
     file_path=os.path.normpath(file_path)
     original_file_path=file_path
-    W5.delete(0, Tkinter.END)
+    W5.delete(0, tkinter.END)
     W5.insert(0,file_path)
     
     
@@ -395,7 +396,7 @@ def Select_Open():
       LA.config(state='normal')
       L0.config(state='normal')
       preview_mode.set('on')
-      W6.delete(0, Tkinter.END)
+      W6.delete(0, tkinter.END)
       W6.insert(0,file_path[0:-4]+'.nuf')
       #source pal is set to dest_pal and inactivated
       W9.config(state='disabled')
@@ -415,25 +416,25 @@ def Select_Open():
       B_3.config(state='normal')
 
     if file_path[-3:].lower() not in native_formats:
-      print 'using own loader'
+      print('using own loader')
       source_image=Image.open(file_path)
       variable=source_image.convert("RGB")
       #paranoia mode requested by Deekay
       if variable.size != (320,200):
         variable=variable.resize((320,200), Image.NEAREST)
-        print '** resizing'
+        print('** resizing')
       base_name=os.path.basename(file_path)[0:-4]
       base_name12=base_name.replace('.','_')
 
       temporary_bmp_file=os.path.join(tmp_path,(base_name12+'.bmp'))
       file_path=temporary_bmp_file
       variable.save(temporary_bmp_file,"BMP")
-      print '**** bmp: %s ' % temporary_bmp_file
-      W5.delete(0, Tkinter.END)
+      print('**** bmp: %s ' % temporary_bmp_file)
+      W5.delete(0, tkinter.END)
       W5.insert(0,original_file_path)
   
     #set output if still blank
-    W6.delete(0, Tkinter.END)
+    W6.delete(0, tkinter.END)
     W6.insert(0,original_file_path[0:-4]+'.nuf')
 
     source_image=Image.open(file_path)
@@ -446,13 +447,13 @@ def Select_Open():
     return file_path
 
 def Select_Save():
-    got_path = tkFileDialog.asksaveasfilename(title="Save file", filetypes=[("nuf file",".nuf"),("All files",".*")])
+    got_path = tkinter.filedialog.asksaveasfilename(title="Save file", filetypes=[("nuf file",".nuf"),("All files",".*")])
     if not got_path:
       got_path='.'
     if got_path=='.':
       return
     file_path = got_path
-    W6.delete(0, Tkinter.END)
+    W6.delete(0, tkinter.END)
     W6.insert(0,file_path)
     return file_path
 #--------------------
@@ -555,10 +556,10 @@ def m_Convert(*m_optional):
     target_file_name=os.path.basename(target_file)
 
     #update entry
-    m_W6.delete(0, Tkinter.END)
+    m_W6.delete(0, tkinter.END)
     m_W6.insert(0,target_file)
 
-    m_pcomm.append(unicode(source_file))
+    m_pcomm.append(str(source_file))
 
     #creat basename: '/path/image.nuf' -> 'image'
     target_base=os.path.join(tmp_path,target_file_name[0:-4])
@@ -630,19 +631,19 @@ def m_Convert(*m_optional):
     #if preview_mode.get()=='on':
     if m_p_only!=0:
         m_pcomm.extend(['--otype','bmp'])
-        m_pcomm.extend(['-o','%s' % (unicode(preview_file))])
+        m_pcomm.extend(['-o','%s' % (str(preview_file))])
     else:
-        m_pcomm.extend(['-o','%s' % (unicode(mui_file))])
-        infobox=Tkinter.Toplevel()
-        infomsg=Tkinter.Message(infobox,anchor='w',width=200,padx=10,pady=10, text='''Conversion in progress!
+        m_pcomm.extend(['-o','%s' % (str(mui_file))])
+        infobox=tkinter.Toplevel()
+        infomsg=tkinter.Message(infobox,anchor='w',width=200,padx=10,pady=10, text='''Conversion in progress!
 Depending on your settings,
 this may take a while...''')
         infomsg.pack()
         infobox.update()
     
-    print "this will be done:"
+    print("this will be done:")
 		
-    print m_pcomm
+    print(m_pcomm)
     subprocess.call(m_pcomm)
 
     if m_p_only==1:
@@ -654,27 +655,27 @@ this may take a while...''')
     #copy wanted images
     #if not preview: copy result.nuf
     if m_p_only==0:
-      print 'copy "%s" to "%s"' % (mui_file,target_path)
+      print('copy "%s" to "%s"' % (mui_file,target_path))
       try:
         shutil.copy (mui_file, target_path)
       except:
-        tkMessageBox.showwarning('Ooops!','Something went wrong')
+        tkinter.messagebox.showwarning('Ooops!','Something went wrong')
         infobox.destroy()
       infobox.destroy()
    
     #if SavePreview called this:
     if m_p_only==2:
-      got_path = tkFileDialog.asksaveasfilename(title="Save Pre-Convert as", filetypes=[("bmp file",".bmp"),("All files",".*")],initialdir=target_path,initialfile=os.path.basename(preview_file))
+      got_path = tkinter.filedialog.asksaveasfilename(title="Save Pre-Convert as", filetypes=[("bmp file",".bmp"),("All files",".*")],initialdir=target_path,initialfile=os.path.basename(preview_file))
       if not got_path:
         got_path='.'
       if got_path=='.':
         return
       save_preview_path = got_path
-      print 'copy "%s" to "%s"' % (preview_file,save_preview_path)
+      print('copy "%s" to "%s"' % (preview_file,save_preview_path))
       try:
         shutil.copy (preview_file, save_preview_path)
       except:
-        tkMessageBox.showwarning('Ooops!','Something went wrong')
+        tkinter.messagebox.showwarning('Ooops!','Something went wrong')
         infobox.destroy()
       
     #update images
@@ -716,7 +717,7 @@ def m_Select_Open():
     global m_source_photo
     global accepted_types
     global tmp_path
-    got_path = tkFileDialog.askopenfilename(title="Open file", filetypes=[("Image file",accepted_types),("All files",".*")])
+    got_path = tkinter.filedialog.askopenfilename(title="Open file", filetypes=[("Image file",accepted_types),("All files",".*")])
     if not got_path:
       got_path='.'
     if got_path=='.':
@@ -726,14 +727,14 @@ def m_Select_Open():
     file_path=os.path.normpath(file_path)
     #print file_path
     original_file_path=file_path
-    m_W5.delete(0, Tkinter.END)
+    m_W5.delete(0, tkinter.END)
     m_W5.insert(0,file_path)
     
     if file_path[-3:].lower() in interlace_formats:
       m_LA.config(state='normal')
       m_L0.config(state='normal')
       m_preview_mode.set('on')
-      m_W6.delete(0, Tkinter.END)
+      m_W6.delete(0, tkinter.END)
       m_W6.insert(0,file_path[0:-4]+'.mui')
       m_W9.config(state='disabled')
       m_B_1.config(state='disabled')
@@ -752,26 +753,26 @@ def m_Select_Open():
         m_B_3.config(state='normal')
 
     if file_path[-3:].lower() not in native_formats:
-      print 'using own loader'
+      print('using own loader')
       source_image=Image.open(file_path)
       variable=source_image.convert("RGB")
       #paranoia mode
       if variable.size != (320,200):
-        print variable.size
+        print(variable.size)
         variable=variable.resize((320,200), Image.NEAREST)
-        print '** resizing'
+        print('** resizing')
       base_name=os.path.basename(file_path)[0:-4]
       base_name12=base_name.replace('.','_')
 
       temporary_bmp_file=os.path.join(tmp_path,(base_name12+'.bmp'))
       file_path=temporary_bmp_file
       variable.save(temporary_bmp_file,"BMP")
-      print '**** bmp: %s ' % temporary_bmp_file
-      m_W5.delete(0, Tkinter.END)
+      print('**** bmp: %s ' % temporary_bmp_file)
+      m_W5.delete(0, tkinter.END)
       m_W5.insert(0,original_file_path)
 
     #set output if still blank
-    m_W6.delete(0, Tkinter.END)
+    m_W6.delete(0, tkinter.END)
     m_W6.insert(0,original_file_path[0:-4]+'.mui')
 
     source_image=Image.open(file_path)
@@ -784,13 +785,13 @@ def m_Select_Open():
     return file_path
 
 def m_Select_Save():
-    got_path = tkFileDialog.asksaveasfilename(title="Save file", filetypes=[("mui file",".mui"),("All files",".*")])
+    got_path = tkinter.filedialog.asksaveasfilename(title="Save file", filetypes=[("mui file",".mui"),("All files",".*")])
     if not got_path:
       got_path='.'
     if got_path=='.':
       return
     file_path = got_path
-    m_W6.delete(0, Tkinter.END)
+    m_W6.delete(0, tkinter.END)
     m_W6.insert(0,file_path)
     return file_path
 #----------------------------------------------------
@@ -808,15 +809,15 @@ def  m_StoreAll():
       result_file  = os.path.join(tmp_path,result_file_name)
       error_file    = os.path.join(tmp_path,error_file_name)
       flicker_file    = os.path.join(tmp_path,flicker_file_name)
-      print 'copy "%s" to "%s"' % (result_file,target_path)
-      print 'copy "%s" to "%s"' % (error_file,target_path)
-      print 'copy "%s" to "%s"' % (flicker_file,target_path)
+      print('copy "%s" to "%s"' % (result_file,target_path))
+      print('copy "%s" to "%s"' % (error_file,target_path))
+      print('copy "%s" to "%s"' % (flicker_file,target_path))
       try:
         shutil.copy (result_file, target_path)
         shutil.copy (error_file, target_path)
         shutil.copy (flicker_file, target_path)
       except:
-        tkMessageBox.showwarning('Ooops!','Something went wrong')
+        tkinter.messagebox.showwarning('Ooops!','Something went wrong')
         infobox.destroy()
   
 def StoreAll():
@@ -830,136 +831,136 @@ def StoreAll():
       error_file_name     = target_base+'_errormap.bmp'
       result_file  = os.path.join(tmp_path,result_file_name)
       error_file    = os.path.join(tmp_path,error_file_name)
-      print 'copy "%s" to "%s"' % (result_file,target_path)
-      print 'copy "%s" to "%s"' % (error_file,target_path)
+      print('copy "%s" to "%s"' % (result_file,target_path))
+      print('copy "%s" to "%s"' % (error_file,target_path))
       try:
         shutil.copy (result_file, target_path)
         shutil.copy (error_file, target_path)
       except:
-        tkMessageBox.showwarning('Ooops!','Something went wrong')
+        tkinter.messagebox.showwarning('Ooops!','Something went wrong')
         infobox.destroy()
 #----------------------------------------------------
-print 'GUI Version 0.08 / 05.08.2010'
-a = Tkinter.Tk()
-n = notebook(a, Tkinter.TOP)
-root=Tkinter.Frame(n())
-evil=Tkinter.Frame(n())
+print('GUI Version 0.08 / 05.08.2010')
+a = tkinter.Tk()
+n = notebook(a, tkinter.TOP)
+root=tkinter.Frame(n())
+evil=tkinter.Frame(n())
 #root = Tkinter.Tk()
 a.title('Mufflon - High Quality Commodore 64 Imageconverter')
-a.resizable(Tkinter.FALSE,Tkinter.FALSE)
+a.resizable(tkinter.FALSE,tkinter.FALSE)
 
 tmp_path=tempfile.mkdtemp()
 
 #check for mufflon binary
 current_path=os.getcwd()
 if os.path.exists(os.path.join(current_path,'mufflon')):
-  print 'found mufflon in current dir'
+  print('found mufflon in current dir')
   mufflon_file = './mufflon'
 else:
-  print 'assuming mufflon to be in PATH'
+  print('assuming mufflon to be in PATH')
   mufflon_file = 'mufflon'
   
-print 'running on',sys.platform
+print('running on',sys.platform)
 if sys.platform in ('win32','win64'):
     mufflon_file = 'mufflon.exe '
-    print 'windows detected'
+    print('windows detected')
     allhopelost=1
     if os.path.exists(os.path.join(current_path,'mufflon.exe')):
-      print '%s found in current dir' % mufflon_file
+      print('%s found in current dir' % mufflon_file)
     else:
-      tkMessageBox.showwarning('mufflon not found','"%s"\nnot found in current\ndirectory!' % mufflon_file)
+      tkinter.messagebox.showwarning('mufflon not found','"%s"\nnot found in current\ndirectory!' % mufflon_file)
       sys.exit()
        
 #from here on, split nufli/muifli
 
-preview=Tkinter.StringVar()
+preview=tkinter.StringVar()
 preview.set('off')
 
-dither=Tkinter.IntVar()
+dither=tkinter.IntVar()
 dither.set(0)
 row=0
 
-W3=Tkinter.Label(root,text='Input File:')
+W3=tkinter.Label(root,text='Input File:')
 W3.grid(row=row,column=0,sticky='E')
 
-W5=Tkinter.Entry(root)
+W5=tkinter.Entry(root)
 W5.grid(row=row,column=1,columnspan=6,sticky='WE')
 
-W7=Tkinter.Button(root,text='Select...',command=Select_Open)
+W7=tkinter.Button(root,text='Select...',command=Select_Open)
 W7.grid(row=row,column=7,sticky='WE',padx=5)
 row+=1
 
-T1=Tkinter.Label(root,text='Input filetypes can be any PC gfx, IFLI (.gun/.fun/.fp2) or Drazlace (.drl)',font=("Helvetica",fontsize))
+T1=tkinter.Label(root,text='Input filetypes can be any PC gfx, IFLI (.gun/.fun/.fp2) or Drazlace (.drl)',font=("Helvetica",fontsize))
 T1.grid(row=row,column=1,columnspan=6,sticky='W')
 row+=1
 
-W4=Tkinter.Label(root,text='Output File (.nuf):')
+W4=tkinter.Label(root,text='Output File (.nuf):')
 W4.grid(row=row,column=0,sticky='E')
 
-W6=Tkinter.Entry(root)
+W6=tkinter.Entry(root)
 W6.grid(row=row,column=1,columnspan=6,sticky='WE')
 
-W8=Tkinter.Button(root,text='Select...',command=Select_Save)
+W8=tkinter.Button(root,text='Select...',command=Select_Save)
 W8.grid(row=row,column=7,sticky='WE',padx=5)
 row+=1
 
-T2=Tkinter.Label(root,text=' Note: Every image is also executable with SYS12288 / JMP $3000',font=("Helvetica",fontsize))
+T2=tkinter.Label(root,text=' Note: Every image is also executable with SYS12288 / JMP $3000',font=("Helvetica",fontsize))
 T2.grid(row=row,column=1,columnspan=5,sticky='W')
 row+=1
 
-W9=Tkinter.Label(root,text='Source Palette',font=("Helvetica",fontsize))
+W9=tkinter.Label(root,text='Source Palette',font=("Helvetica",fontsize))
 W9.grid(row=row,column=0,sticky='W')
 
-Wc=Tkinter.Label(root,text='Destination Palette',font=("Helvetica",fontsize))
+Wc=tkinter.Label(root,text='Destination Palette',font=("Helvetica",fontsize))
 Wc.grid(row=row,column=4,sticky='W')
 row+=1
 
-F1=Tkinter.Frame(root,borderwidth=5,relief='ridge')
+F1=tkinter.Frame(root,borderwidth=5,relief='ridge')
 F1.grid(row=row,column=0,columnspan=4,sticky='WE')
 
-F2=Tkinter.Frame(root,borderwidth=5,relief='ridge')
+F2=tkinter.Frame(root,borderwidth=5,relief='ridge')
 F2.grid(row=row,column=4,columnspan=1,sticky='NWE')
 
-F3=Tkinter.Frame(root)
+F3=tkinter.Frame(root)
 F3.grid(row=row,column=5,columnspan=3,sticky='NWE')
 
-flibug=Tkinter.StringVar()
+flibug=tkinter.StringVar()
 flibug.set('on')
 
-multipass=Tkinter.StringVar()
+multipass=tkinter.StringVar()
 multipass.set('off')
 
 preview_mode='off'
 result_mode='on'
 
-C2=Tkinter.Checkbutton(F3, text='Render FLI-bug',variable=flibug,onvalue='on',offvalue='off')
+C2=tkinter.Checkbutton(F3, text='Render FLI-bug',variable=flibug,onvalue='on',offvalue='off')
 C2.grid(row=5,column=6,columnspan=2,sticky='W')
 
-C3=Tkinter.Checkbutton(F3, text='FLI-bug Multiple Passes (slow)',variable=multipass,onvalue='on',offvalue='off')
+C3=tkinter.Checkbutton(F3, text='FLI-bug Multiple Passes (slow)',variable=multipass,onvalue='on',offvalue='off')
 C3.grid(row=6,column=6,columnspan=2,sticky='W')
 
 row+=1
 
-F4=Tkinter.Frame(root,borderwidth=5,relief='ridge')
+F4=tkinter.Frame(root,borderwidth=5,relief='ridge')
 F4.grid(row=row,column=0,columnspan=4,sticky='NWE')
 
-F5=Tkinter.Frame(root,borderwidth=5,relief='ridge')
+F5=tkinter.Frame(root,borderwidth=5,relief='ridge')
 F5.grid(row=row,column=4,columnspan=4,sticky='NWE')
 
-preview_mode = Tkinter.StringVar()
+preview_mode = tkinter.StringVar()
 preview_mode.set('off')
 
-result_mode = Tkinter.StringVar()
+result_mode = tkinter.StringVar()
 result_mode.set('on')
 
-P1 = Tkinter.Radiobutton(F4, text='Original',variable=preview_mode, value='off',command=Preview_Off)
+P1 = tkinter.Radiobutton(F4, text='Original',variable=preview_mode, value='off',command=Preview_Off)
 P1.grid(row=0,column=1,sticky='E')
-P2 = Tkinter.Radiobutton(F4, text='Pre-Convert',variable=preview_mode, value='on',command=Preview_On)
+P2 = tkinter.Radiobutton(F4, text='Pre-Convert',variable=preview_mode, value='on',command=Preview_On)
 P2.grid(row=0,column=2,sticky='W')
 
-P3 = Tkinter.Radiobutton(F5, text='Result',variable=result_mode, value='on',command=Resultview_On)
+P3 = tkinter.Radiobutton(F5, text='Result',variable=result_mode, value='on',command=Resultview_On)
 P3.grid(row=0,column=1,sticky='E')
-P4 = Tkinter.Radiobutton(F5, text='Errormap',variable=result_mode, value='off',command=Resultview_Off)
+P4 = tkinter.Radiobutton(F5, text='Errormap',variable=result_mode, value='off',command=Resultview_Off)
 P4.grid(row=0,column=2,sticky='W')
 
 source_photo=ImageTk.PhotoImage(Image.new("RGB", (320,200)))
@@ -967,214 +968,214 @@ result_photo=ImageTk.PhotoImage(Image.new("RGB", (320,200)))
 preview_photo=ImageTk.PhotoImage(Image.new("RGB", (320,200)))
 error_photo=ImageTk.PhotoImage(Image.new("RGB", (320,200)))
 
-LPreview = Tkinter.Label(F4)
+LPreview = tkinter.Label(F4)
 LPreview.config(image=source_photo)
 LPreview.grid(column=0,columnspan=4,row=1)
 
-RPreview = Tkinter.Label(F5)
+RPreview = tkinter.Label(F5)
 RPreview.config(image=result_photo)
 RPreview.grid(column=0,columnspan=4,row=1)
 
 row+=1
 
-L0=Tkinter.Label(root,text='Input Interlace\nprocessing:',font=("Helvetica",fontsize),state='disabled')
+L0=tkinter.Label(root,text='Input Interlace\nprocessing:',font=("Helvetica",fontsize),state='disabled')
 L0.grid(row=row,sticky='W')
 
-inputlace = Tkinter.StringVar()
+inputlace = tkinter.StringVar()
 inputlace.set("rastered") # initial value
 
-LA = Tkinter.OptionMenu(root, inputlace, "rastered", "blended",command=Do_Preview)
+LA = tkinter.OptionMenu(root, inputlace, "rastered", "blended",command=Do_Preview)
 LA.config(width=6,state='disabled')
 LA.grid(row=row,column=1,sticky='WE')
 
-L1=Tkinter.Button(root,text='Save Pre-Convert',command=SavePreview)
+L1=tkinter.Button(root,text='Save Pre-Convert',command=SavePreview)
 L1.grid(row=row,column=2,columnspan=2,sticky='WE')
 
-L2=Tkinter.Button(root,text='Convert',command=Convert)
+L2=tkinter.Button(root,text='Convert',command=Convert)
 L2.grid(row=row,column=7,sticky='w',padx=20)
 #L2.grid(row=row,column=7,sticky='E')
 
-C1=Tkinter.Button(root, text='Store Result-& Errormap',command=StoreAll)
+C1=tkinter.Button(root, text='Store Result-& Errormap',command=StoreAll)
 C1.grid(row=row,column=4,columnspan=2,sticky='W')
 
 MODES = [("Pepto", "pepto"),("DeeKay", "deekay"),("Prepare Truecolor", "p")]
-source_mode = Tkinter.StringVar()
+source_mode = tkinter.StringVar()
 source_mode.set("pepto")
 
 i=0
 text,mode = MODES[i]
-B_1 = Tkinter.Radiobutton(F1, text=text,variable=source_mode, value=mode,command=SMode_changed)
+B_1 = tkinter.Radiobutton(F1, text=text,variable=source_mode, value=mode,command=SMode_changed)
 B_1.grid(row=i,column=0,sticky='W')
 i+=1
 text,mode = MODES[i]
-B_2 = Tkinter.Radiobutton(F1, text=text,variable=source_mode, value=mode,command=SMode_changed)
+B_2 = tkinter.Radiobutton(F1, text=text,variable=source_mode, value=mode,command=SMode_changed)
 B_2.grid(row=i,column=0,sticky='W')
 i+=1
 text,mode = MODES[i]
-B_3 = Tkinter.Radiobutton(F1, text=text,variable=source_mode, value=mode,command=SMode_changed)
+B_3 = tkinter.Radiobutton(F1, text=text,variable=source_mode, value=mode,command=SMode_changed)
 B_3.grid(row=i,column=0,sticky='W')
 
-Wa=Tkinter.Label(F1,text='Luminance Min',font=("Helvetica",smallfontsize),state='disabled')
+Wa=tkinter.Label(F1,text='Luminance Min',font=("Helvetica",smallfontsize),state='disabled')
 Wa.grid(row=0,column=3,sticky='E')
-lmin_scale=Tkinter.IntVar()
+lmin_scale=tkinter.IntVar()
 lmin_scale.set(0)
-S1 = Tkinter.Scale(F1, from_=0, to=100,resolution=2,orient=Tkinter.HORIZONTAL,font=("Helvetica",smallfontsize),state='disabled',variable=lmin_scale,command=Do_Preview)
+S1 = tkinter.Scale(F1, from_=0, to=100,resolution=2,orient=tkinter.HORIZONTAL,font=("Helvetica",smallfontsize),state='disabled',variable=lmin_scale,command=Do_Preview)
 S1.grid(row=0,column=4,sticky='E')
 
-Wb=Tkinter.Label(F1,text='Luminance Max',font=("Helvetica",smallfontsize),state='disabled')
+Wb=tkinter.Label(F1,text='Luminance Max',font=("Helvetica",smallfontsize),state='disabled')
 Wb.grid(row=1,column=3,sticky='E')
-lmax_scale=Tkinter.IntVar()
+lmax_scale=tkinter.IntVar()
 lmax_scale.set(50)
-S2 = Tkinter.Scale(F1, from_=0, to=100,resolution=2,orient=Tkinter.HORIZONTAL,font=("Helvetica",smallfontsize),state='disabled',variable=lmax_scale,command=Do_Preview)
+S2 = tkinter.Scale(F1, from_=0, to=100,resolution=2,orient=tkinter.HORIZONTAL,font=("Helvetica",smallfontsize),state='disabled',variable=lmax_scale,command=Do_Preview)
 S2.grid(row=1,column=4,sticky='E')
 
 MODES2 = [("Pepto", "pepto"),("DeeKay", "deekay")]
-dest_mode = Tkinter.StringVar()
+dest_mode = tkinter.StringVar()
 dest_mode.set("pepto")
 i=0
 for text, mode in MODES2:
-        C = Tkinter.Radiobutton(F2, text=text,
+        C = tkinter.Radiobutton(F2, text=text,
                         variable=dest_mode, value=mode,command=SMode_changed)
         C.grid(row=i,column=0,sticky='W')
         i+=1
 
 #*********************************************************************************
 #here comes the muifli
-m_preview=Tkinter.StringVar()
+m_preview=tkinter.StringVar()
 m_preview.set('off')
 
-m_dither=Tkinter.IntVar()
+m_dither=tkinter.IntVar()
 m_dither.set(0)
 m_row=0
 
-m_W3=Tkinter.Label(evil,text='Input File:')
+m_W3=tkinter.Label(evil,text='Input File:')
 m_W3.grid(row=m_row,column=0,sticky='E')
 
-m_W5=Tkinter.Entry(evil)
+m_W5=tkinter.Entry(evil)
 m_W5.grid(row=m_row,column=1,columnspan=5,sticky='WE')
 
-m_W7=Tkinter.Button(evil,text='Select...',command=m_Select_Open)
+m_W7=tkinter.Button(evil,text='Select...',command=m_Select_Open)
 m_W7.grid(row=m_row,column=6,sticky='WE',padx=5)
 m_row+=1
 
-m_T1=Tkinter.Label(evil,text='Input filetypes can be any PC gfx, IFLI (.gun/.fun/.fp2) or Drazlace (.drl)',font=("Helvetica",fontsize))
+m_T1=tkinter.Label(evil,text='Input filetypes can be any PC gfx, IFLI (.gun/.fun/.fp2) or Drazlace (.drl)',font=("Helvetica",fontsize))
 m_T1.grid(row=m_row,column=1,columnspan=6,sticky='W')
 m_row+=1
 
-m_W4=Tkinter.Label(evil,text='Output File (.mui):')
+m_W4=tkinter.Label(evil,text='Output File (.mui):')
 m_W4.grid(row=m_row,column=0,sticky='E')
 
-m_W6=Tkinter.Entry(evil)
+m_W6=tkinter.Entry(evil)
 m_W6.grid(row=m_row,column=1,columnspan=5,sticky='WE')
 
-m_W8=Tkinter.Button(evil,text='Select...',command=m_Select_Save)
+m_W8=tkinter.Button(evil,text='Select...',command=m_Select_Save)
 m_W8.grid(row=m_row,column=6,sticky='WE',padx=5)
 m_row+=1
 
-m_T2=Tkinter.Label(evil,text='Note: Every image is also executable with SYS12288 / JMP $3000',font=("Helvetica",fontsize))
+m_T2=tkinter.Label(evil,text='Note: Every image is also executable with SYS12288 / JMP $3000',font=("Helvetica",fontsize))
 m_T2.grid(row=m_row,column=1,columnspan=5,sticky='W')
 m_row+=1
 
-m_W9=Tkinter.Label(evil,text='Source Palette',font=("Helvetica",fontsize))
+m_W9=tkinter.Label(evil,text='Source Palette',font=("Helvetica",fontsize))
 m_W9.grid(row=m_row,column=0,sticky='W')
 
-m_Wc=Tkinter.Label(evil,text='Frame-individual Colors',font=("Helvetica",fontsize))
+m_Wc=tkinter.Label(evil,text='Frame-individual Colors',font=("Helvetica",fontsize))
 m_Wc.grid(row=m_row,column=4,sticky='W')
 
-m_Wc=Tkinter.Label(evil,text='Destination Palette',font=("Helvetica",fontsize))
+m_Wc=tkinter.Label(evil,text='Destination Palette',font=("Helvetica",fontsize))
 m_Wc.grid(row=m_row,column=5,sticky='W')
 m_row+=1
 
-m_F1=Tkinter.Frame(evil,borderwidth=5,relief='ridge')
+m_F1=tkinter.Frame(evil,borderwidth=5,relief='ridge')
 m_F1.grid(row=m_row,column=0,columnspan=4,sticky='NWES')
 
-m_F2=Tkinter.Frame(evil,borderwidth=5,relief='ridge')
+m_F2=tkinter.Frame(evil,borderwidth=5,relief='ridge')
 m_F2.grid(row=m_row,column=4,columnspan=1,sticky='NWES')
 
-m_F2b=Tkinter.Frame(evil)
+m_F2b=tkinter.Frame(evil)
 m_F2b.grid(row=m_row,column=5,columnspan=2,sticky='NWE')
 
-m_extra_1=Tkinter.Frame(m_F2b,borderwidth=5,relief='ridge')
+m_extra_1=tkinter.Frame(m_F2b,borderwidth=5,relief='ridge')
 m_extra_1.grid(row=0,column=0,columnspan=1,sticky='WE')
 
-m_extra_2=Tkinter.Frame(m_F2b)
+m_extra_2=tkinter.Frame(m_F2b)
 m_extra_2.grid(row=1,column=0,columnspan=1,sticky='WE')
 
-m_F3=Tkinter.Frame(evil)
+m_F3=tkinter.Frame(evil)
 m_F3.grid(row=m_row,column=6,columnspan=2,sticky='NWE')
 
-m_inks=Tkinter.StringVar()
+m_inks=tkinter.StringVar()
 m_inks.set('off')
 
-m_papers=Tkinter.StringVar()
+m_papers=tkinter.StringVar()
 m_papers.set('off')
 
-m_sprites=Tkinter.StringVar()
+m_sprites=tkinter.StringVar()
 m_sprites.set('off')
 
-m_MN1=Tkinter.Checkbutton(m_F2, text='Different Inks',variable=m_inks,onvalue='on',offvalue='off')
+m_MN1=tkinter.Checkbutton(m_F2, text='Different Inks',variable=m_inks,onvalue='on',offvalue='off')
 m_MN1.grid(row=1,column=0,sticky='W')
 
-m_MN2=Tkinter.Checkbutton(m_F2, text='Different Papers',variable=m_papers,onvalue='on',offvalue='off')
+m_MN2=tkinter.Checkbutton(m_F2, text='Different Papers',variable=m_papers,onvalue='on',offvalue='off')
 m_MN2.grid(row=2,column=0,sticky='W')
 
-m_MN3=Tkinter.Checkbutton(m_F2, text='Different Sprites',variable=m_sprites,onvalue='on',offvalue='off')
+m_MN3=tkinter.Checkbutton(m_F2, text='Different Sprites',variable=m_sprites,onvalue='on',offvalue='off')
 m_MN3.grid(row=3,column=0,sticky='W')
 
-m_MN4=Tkinter.Label(m_F2,text='Note: Selecting checkboxes here\nincreases rendertime and flicker,\n but reduces bugs!',font=("Helvetica",smallfontsize))
+m_MN4=tkinter.Label(m_F2,text='Note: Selecting checkboxes here\nincreases rendertime and flicker,\n but reduces bugs!',font=("Helvetica",smallfontsize))
 m_MN4.grid(row=4,column=0,sticky='W')
 
-m_bruteforce=Tkinter.StringVar()
+m_bruteforce=tkinter.StringVar()
 m_bruteforce.set('on')
 
 m_preview_mode='off'
 m_result_mode='on'
 
-m_deflicker=Tkinter.StringVar()
+m_deflicker=tkinter.StringVar()
 m_deflicker.set('on')
 
-m_M1=Tkinter.Label(m_extra_2,text='FLI-bug color:',font=("Helvetica",fontsize))
+m_M1=tkinter.Label(m_extra_2,text='FLI-bug color:',font=("Helvetica",fontsize))
 m_M1.grid(row=0,column=0,sticky='W')
 
-fbugcol= Tkinter.StringVar()
+fbugcol= tkinter.StringVar()
 fbugcol.set("Black")
 
-m_ELA = Tkinter.OptionMenu(m_extra_2, fbugcol, *fbugcolors)
+m_ELA = tkinter.OptionMenu(m_extra_2, fbugcol, *fbugcolors)
 m_ELA.config(width=6)
 m_ELA.grid(row=0,column=1,sticky='WE')
 
-m_C1=Tkinter.Checkbutton(m_extra_2, text='Deflicker',variable=m_deflicker,onvalue='on',offvalue='off')
+m_C1=tkinter.Checkbutton(m_extra_2, text='Deflicker',variable=m_deflicker,onvalue='on',offvalue='off')
 m_C1.grid(row=1,column=0,sticky='W')
 
-m_C2=Tkinter.Checkbutton(m_extra_2, text='Brute force Spritecolor',variable=m_bruteforce,onvalue='on',offvalue='off')
+m_C2=tkinter.Checkbutton(m_extra_2, text='Brute force Spritecolor',variable=m_bruteforce,onvalue='on',offvalue='off')
 m_C2.grid(row=2,column=0,columnspan=2,sticky='W')
 
 m_row+=1
 
-m_F4=Tkinter.Frame(evil,borderwidth=5,relief='ridge')
+m_F4=tkinter.Frame(evil,borderwidth=5,relief='ridge')
 m_F4.grid(row=m_row,column=0,columnspan=4,sticky='NWE')
 
-m_F5=Tkinter.Frame(evil,borderwidth=5,relief='ridge')
+m_F5=tkinter.Frame(evil,borderwidth=5,relief='ridge')
 m_F5.grid(row=m_row,column=4,columnspan=4,sticky='NW')
 
-m_preview_mode = Tkinter.StringVar()
+m_preview_mode = tkinter.StringVar()
 m_preview_mode.set('off')
 
-m_result_mode = Tkinter.StringVar()
+m_result_mode = tkinter.StringVar()
 m_result_mode.set('on')
 
-m_P1 = Tkinter.Radiobutton(m_F4, text='Original',variable=m_preview_mode, value='off',command=m_Preview_Off)
+m_P1 = tkinter.Radiobutton(m_F4, text='Original',variable=m_preview_mode, value='off',command=m_Preview_Off)
 m_P1.grid(row=0,column=1,sticky='E')
-m_P2 = Tkinter.Radiobutton(m_F4, text='Pre-Convert',variable=m_preview_mode, value='on',command=m_Preview_On)
+m_P2 = tkinter.Radiobutton(m_F4, text='Pre-Convert',variable=m_preview_mode, value='on',command=m_Preview_On)
 m_P2.grid(row=0,column=2,sticky='W')
 
-m_P3 = Tkinter.Radiobutton(m_F5, text='Result',variable=m_result_mode, value='on',command=m_Resultview_On)
+m_P3 = tkinter.Radiobutton(m_F5, text='Result',variable=m_result_mode, value='on',command=m_Resultview_On)
 m_P3.grid(row=0,column=1,sticky='e')
 
-m_P3b = Tkinter.Radiobutton(m_F5, text='Flickermap',variable=m_result_mode, value='onf',command=m_Resultview_Off)
+m_P3b = tkinter.Radiobutton(m_F5, text='Flickermap',variable=m_result_mode, value='onf',command=m_Resultview_Off)
 m_P3b.grid(row=0,column=2,sticky='')
 
-m_P4 = Tkinter.Radiobutton(m_F5, text='Errormap',variable=m_result_mode, value='off',command=m_Resultview_Off)
+m_P4 = tkinter.Radiobutton(m_F5, text='Errormap',variable=m_result_mode, value='off',command=m_Resultview_Off)
 m_P4.grid(row=0,column=3,sticky='W')
 
 m_source_photo=ImageTk.PhotoImage(Image.new("RGB", (320,200)))
@@ -1182,82 +1183,82 @@ m_result_photo=ImageTk.PhotoImage(Image.new("RGB", (320,200)))
 m_preview_photo=ImageTk.PhotoImage(Image.new("RGB", (320,200)))
 m_error_photo=ImageTk.PhotoImage(Image.new("RGB", (320,200)))
 
-m_LPreview = Tkinter.Label(m_F4)
+m_LPreview = tkinter.Label(m_F4)
 m_LPreview.config(image=m_source_photo)
 m_LPreview.grid(column=0,columnspan=4,row=1)
 
-m_RPreview = Tkinter.Label(m_F5)
-m_RPreview.config(image=m_result_photo,anchor=Tkinter.CENTER)
+m_RPreview = tkinter.Label(m_F5)
+m_RPreview.config(image=m_result_photo,anchor=tkinter.CENTER)
 m_RPreview.grid(column=0,columnspan=4,row=1)
 
 m_row+=1
 
-m_L0=Tkinter.Label(evil,text='Input Interlace\nprocessing:',font=("Helvetica",fontsize),state='disabled')
+m_L0=tkinter.Label(evil,text='Input Interlace\nprocessing:',font=("Helvetica",fontsize),state='disabled')
 m_L0.grid(row=m_row,sticky='W')
 
-m_inputlace = Tkinter.StringVar()
+m_inputlace = tkinter.StringVar()
 m_inputlace.set("rastered") # initial value
 
-m_LA = Tkinter.OptionMenu(evil, m_inputlace, "rastered", "blended",command=m_Do_Preview)
+m_LA = tkinter.OptionMenu(evil, m_inputlace, "rastered", "blended",command=m_Do_Preview)
 m_LA.config(width=6,state='disabled')
 m_LA.grid(row=m_row,column=1,sticky='WE')
 
-m_L1=Tkinter.Button(evil,text='Save Pre-Convert',command=m_SavePreview)
+m_L1=tkinter.Button(evil,text='Save Pre-Convert',command=m_SavePreview)
 m_L1.grid(row=m_row,column=2,columnspan=2,sticky='WE')
 
-m_L2=Tkinter.Button(evil,text='Convert',command=m_Convert)
+m_L2=tkinter.Button(evil,text='Convert',command=m_Convert)
 m_L2.grid(row=m_row,column=6,sticky='e',padx=20)
 
-m_SR=Tkinter.Button(evil,text='Store Result-/Flicker- & Errormap-BMP',command=m_StoreAll)
+m_SR=tkinter.Button(evil,text='Store Result-/Flicker- & Errormap-BMP',command=m_StoreAll)
 m_SR.grid(row=m_row,column=4,columnspan=2,sticky='W')
 
 m_MODES = [("Pepto", "pepto"),("DeeKay", "deekay"),("Prepare Truecolor", "p")]
-m_source_mode = Tkinter.StringVar()
+m_source_mode = tkinter.StringVar()
 m_source_mode.set("pepto")
 i=0
 text,mode = m_MODES[i]
-m_B_1 = Tkinter.Radiobutton(m_F1, text=text,variable=m_source_mode, value=mode,command=m_SMode_changed)
+m_B_1 = tkinter.Radiobutton(m_F1, text=text,variable=m_source_mode, value=mode,command=m_SMode_changed)
 m_B_1.grid(row=i,column=0,sticky='W')
 i+=1
 text,mode = m_MODES[i]
-m_B_2 = Tkinter.Radiobutton(m_F1, text=text,variable=m_source_mode, value=mode,command=m_SMode_changed)
+m_B_2 = tkinter.Radiobutton(m_F1, text=text,variable=m_source_mode, value=mode,command=m_SMode_changed)
 m_B_2.grid(row=i,column=0,sticky='W')
 i+=1
 text,mode = m_MODES[i]
-m_B_3 = Tkinter.Radiobutton(m_F1, text=text,variable=m_source_mode, value=mode,command=m_SMode_changed)
+m_B_3 = tkinter.Radiobutton(m_F1, text=text,variable=m_source_mode, value=mode,command=m_SMode_changed)
 m_B_3.grid(row=i,column=0,sticky='W')
 
-m_Wa=Tkinter.Label(m_F1,text='Luminance Min',font=("Helvetica",smallfontsize),state='disabled')
+m_Wa=tkinter.Label(m_F1,text='Luminance Min',font=("Helvetica",smallfontsize),state='disabled')
 m_Wa.grid(row=0,column=3,sticky='E')
-m_lmin_scale=Tkinter.IntVar()
+m_lmin_scale=tkinter.IntVar()
 m_lmin_scale.set(0)
-m_S1 = Tkinter.Scale(m_F1, from_=0, to=100,resolution=2,orient=Tkinter.HORIZONTAL,font=("Helvetica",smallfontsize),state='disabled',variable=m_lmin_scale,command=m_Do_Preview)
+m_S1 = tkinter.Scale(m_F1, from_=0, to=100,resolution=2,orient=tkinter.HORIZONTAL,font=("Helvetica",smallfontsize),state='disabled',variable=m_lmin_scale,command=m_Do_Preview)
 m_S1.grid(row=0,column=4,sticky='E')
 
-m_Wb=Tkinter.Label(m_F1,text='Luminance Max',font=("Helvetica",smallfontsize),state='disabled')
+m_Wb=tkinter.Label(m_F1,text='Luminance Max',font=("Helvetica",smallfontsize),state='disabled')
 m_Wb.grid(row=1,column=3,sticky='E')
-m_lmax_scale=Tkinter.IntVar()
+m_lmax_scale=tkinter.IntVar()
 m_lmax_scale.set(50)
-m_S2 = Tkinter.Scale(m_F1, from_=0, to=100,resolution=2,orient=Tkinter.HORIZONTAL,font=("Helvetica",smallfontsize),state='disabled',variable=m_lmax_scale,command=m_Do_Preview)
+m_S2 = tkinter.Scale(m_F1, from_=0, to=100,resolution=2,orient=tkinter.HORIZONTAL,font=("Helvetica",smallfontsize),state='disabled',variable=m_lmax_scale,command=m_Do_Preview)
 m_S2.grid(row=1,column=4,sticky='E')
 
 m_MODES2 = [("Pepto", "pepto"),("DeeKay", "deekay")]
-m_dest_mode = Tkinter.StringVar()
+m_dest_mode = tkinter.StringVar()
 m_dest_mode.set("pepto")
 i=0
 for text, mode in m_MODES2:
-        m_C = Tkinter.Radiobutton(m_extra_1, text=text,
+        m_C = tkinter.Radiobutton(m_extra_1, text=text,
                         variable=m_dest_mode, value=mode,command=m_SMode_changed)
         m_C.grid(row=0,column=i,sticky='W')
         i+=1
 #*****************************************************
 def About():
-  top = Tkinter.Toplevel()
-  top.resizable(Tkinter.FALSE,Tkinter.FALSE)
+  top = tkinter.Toplevel()
+  top.resizable(tkinter.FALSE,tkinter.FALSE)
   top.title("About Mufflon")
-  canv = Tkinter.Canvas(top,width=395,height=250)
-  canv.config(scrollregion=canv.bbox(Tkinter.ALL))
-  pic1 = Tkinter.PhotoImage(data="""
+  canv = tkinter.Canvas(top,width=395,height=250)
+  canv.config(scrollregion=canv.bbox(tkinter.ALL))
+  pic1 = tkinter.PhotoImage(data="""
 R0lGODlhiwH6APcAAERERAEBAGpQMKqqqrKysldXVpycnG1ZRndjUKSkpIqKigGK1ZSUlNLcpDCv
 9t0hAJrQ8Uy29HFxcQCY65WGcYVuV4KCgnt7e414ZTIpCK6ojzExMSFNY2lpaUM4CAJwsVlHNAB5
 5WRkZACF6KRPHUk5JgGk8wEqWW/G+FqSrABq2KC7yxSJt+bqzwBx3vtlCqgiAlVCKyEgIABPr6mb
@@ -1769,9 +1770,9 @@ Xhpg9VltulWo9zfcKfn/B2AABSij/hVwagNEYAIVuEAGNtCBD+xDQAAAOw==
 
   canv.create_image(0,0, image = pic1, anchor='nw')
   canv.image=pic1
-  canv.pack(expand = Tkinter.YES, fill = Tkinter.BOTH)
+  canv.pack(expand = tkinter.YES, fill = tkinter.BOTH)
   #canvas.pack()
-  button= Tkinter.Button(top, text="Close", command=top.destroy)
+  button= tkinter.Button(top, text="Close", command=top.destroy)
   button.pack(side='right')
 
 def Help():
@@ -2498,9 +2499,9 @@ anyway! ;-)
 
 DeeKay/Crest on Aug 4th, 2010 - Thumbs up!
 """
-  help=Tkinter.Toplevel()
-  s = Tkinter.Scrollbar(help)
-  T = Tkinter.Text(help,width=80)
+  help=tkinter.Toplevel()
+  s = tkinter.Scrollbar(help)
+  T = tkinter.Text(help,width=80)
   T.focus_set()
   #s.pack(side=Tkinter.RIGHT, fill=Tkinter.Y)
   #T.pack(side=Tkinter.LEFT, fill=Tkinter.Y)
@@ -2508,17 +2509,17 @@ DeeKay/Crest on Aug 4th, 2010 - Thumbs up!
   T.grid(row=0,column=0,sticky='we')
   s.config(command=T.yview)
   T.config(yscrollcommand=s.set)
-  T.insert(Tkinter.END, whole_readme)
-  help_button= Tkinter.Button(help, text="Close", command=help.destroy)
+  T.insert(tkinter.END, whole_readme)
+  help_button= tkinter.Button(help, text="Close", command=help.destroy)
   help_button.grid(row=1,column=0,sticky='e')
 
 #*****************************************************
 #menu is out of notebook
-menu = Tkinter.Menu(a)
+menu = tkinter.Menu(a)
 a.config(menu=menu)
 
-filemenu = Tkinter.Menu(menu)
-helpmenu = Tkinter.Menu(menu)
+filemenu = tkinter.Menu(menu)
+helpmenu = tkinter.Menu(menu)
 menu.add_cascade(label="File", menu=filemenu)
 menu.add_cascade(label="Help", menu=helpmenu)
 
@@ -2536,11 +2537,11 @@ if __name__ == "__main__":
         a.mainloop()
 
 #now clean tmp dir
-print 'removing "%s" again' % tmp_path
+print('removing "%s" again' % tmp_path)
 try:
   shutil.rmtree(tmp_path)
 except:
-  tkMessageBox.showwarning('Ooops!','Something went wrong')
+  tkinter.messagebox.showwarning('Ooops!','Something went wrong')
   infobox.destroy()
 
 
